@@ -1,0 +1,49 @@
+.task-list {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* 水平居中对齐 */
+  width: 100%;
+  margin-top: 10px;
+}
+
+.task-item {
+  width: 20%; /* 调整宽度以适应居中显示 */
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  margin-bottom: 1px;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+}
+
+.task-itemcompleted {
+  width: 20%; 
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  margin-bottom: 1px;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+  color: #999;
+}
+
+.task-checkbox {
+  margin-right: 10px;
+}
+
+.task-text {
+  flex: 1;
+}
+
+.delete-btn {
+  padding: 5px 10px;
+  background-color: #ff6347;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.delete-btn:hover {
+  background-color: #ff4500;
+}
