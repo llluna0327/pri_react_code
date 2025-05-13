@@ -1,76 +1,92 @@
 import React, { useState } from "react";
-import "./App.css";
+import { Input, Button, List, Avatar, Row, Col, Card } from "antd";
+import axios from "axios";
 
-function NewsApp() {
-  const [newsData] = useState([
-    {
-      id: 1,
-      title: "苹果微软亚马逊领衔，谁是下一个万亿市值巨头？",
-      content: "2021-11-10",
-    },
-    { id: 2, title: "互联网下一站不能再以方便牺牲安全", content: "2021-11-11" },
-    {
-      id: 3,
-      title: "工信部：到2025年行政村5G通达率将达八成",
-      content: "2021-11-12",
-    },
-    { id: 4, title: "商业地产服务智慧化凸显", content: "2021-11-13" },
-    { id: 5, title: "数据分析师：海量信息的“淘金者”", content: "2021-11-14" },
-    {
-      id: 6,
-      title: "为什么互联网大厂[容不下」35岁中年人？”",
-      content: "2021-11-15",
-    },
-  ]);
+// const { Meta } = Card;
 
-  // 搜索输入框的值
-  const [searchTerm, setSearchTerm] = useState("");
-  // 搜索关键词
-  const [searchQuery, setSearchQuery] = useState("");
+const UserSearch = () => {
+  //关键词与用户状态必须
+  const [keyword, setKeyword] = useState("");
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  // 过滤新闻
-  const filteredNews = newsData.filter((news) =>
-    news.title.includes(searchQuery)
-  );
+  const handleSearch = async () => {
+    //输入为空返回
+    if (!keyword.trim()) return;
 
-  const handleNewsClick = (title) => {
-    alert(title);
-  };
+    setLoading(true);
 
-  // 处理回车
-  const handleKeyDown = (e) => {
-    if (e.key === "Enter") {
-      setSearchQuery(searchTerm); // 回车更新
-      console.log("搜索关键词:", searchTerm);
+    try {
+      const response = await axios.get(
+        // `https://api.github.com/search/users?q=${encodeURIComponent(keyword)}`
+        `https://api.github.com/search/users?q=${keyword}`
+      );
+      setUsers(response.data.items);
+    } catch (err) {
+      // setError(err.message);
+      setUsers([]);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="news-app">
-      <div className="search-container">
-        <input
-          type="text"
-          placeholder="搜索新闻..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)} // 更新输入框
-          onKeyDown={handleKeyDown}
+    <div>
+      <div
+        className="header"
+        style={{ marginBottom: 20, justifyContent: "center", display: "flex" }}
+      >
+        <Input
+          placeholder="Enter keyword to search users"
+          value={keyword}
+          onChange={(e) => setKeyword(e.target.value)}
+          onPressEnter={handleSearch}
+          style={{ width: 300, marginRight: 10 }}
         />
+        <Button type="primary" onClick={handleSearch} loading={loading}>
+          Search
+        </Button>
       </div>
 
-      <div className="news-list">
-        {filteredNews.map((news) => (
-          <div
-            key={news.id}
-            className="news-item"
-            onClick={() => handleNewsClick(news.title)}
-          >
-            <h3>{news.title}</h3>
-            <p>{news.content}</p>
-          </div>
+      {/* <List
+        loading={loading}
+        itemLayout="horizontal"
+        dataSource={users}
+        renderItem={(user) => (
+          <List.Item>
+            <List.Item.Meta
+              avatar={<Avatar src={user.avatar_url} />}
+              title={<a href={user.html_url} target="_blank" rel="noopener noreferrer">{user.login}</a>}
+              description={`User ID: ${user.id}`}
+            />
+          </List.Item>
+        )}
+      /> */}
+        {users.map((user) => (
+            <Card
+              hoverable
+              loading={loading}
+              cover={<img alt="avatar" src={user.avatar_url} />}
+              style={{ width: 200, margin: "10px auto", display: "inline-block" ,marginLeft: "50px"}}
+              actions={[
+                <a 
+                  href={user.html_url} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                >
+                  {user.login}
+                </a>
+              ]}
+            >
+              {/* <Meta
+                avatar={<Avatar src={user.avatar_url} />}
+                title={user.login}
+                description={`ID: ${user.id}`}
+              /> */}
+            </Card>
         ))}
-      </div>
     </div>
   );
-}
+};
 
-export default NewsApp;
+export default UserSearch;
